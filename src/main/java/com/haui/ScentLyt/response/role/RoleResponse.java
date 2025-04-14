@@ -1,5 +1,6 @@
 package com.haui.ScentLyt.response.role;
 
+import com.haui.ScentLyt.entity.Role;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -17,7 +18,7 @@ public class RoleResponse {
     public static RoleResponse fromRole(Role role) {
         RoleResponse response = new RoleResponse();
         BeanUtils.copyProperties(role, response);
-        response.setId(role.getRoleId());
+        response.setId(role.getId());
         return response;
     }
 }

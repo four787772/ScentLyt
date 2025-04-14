@@ -15,8 +15,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<User> findByPhoneNumberAndActive(String phoneNumber, Boolean active);
 
-    Optional<User> findByEmailOrPhoneNumberAndActive(String email, String phoneNumber, Boolean active);
-
     Optional<User> findByEmailAndActive(String email, Boolean active);
 
     Optional<User> findByIdAndActive(Integer id, Boolean active);

@@ -1,8 +1,10 @@
 package com.haui.ScentLyt.response.user;
 
+import com.haui.ScentLyt.entity.User;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Data
@@ -14,7 +16,7 @@ import java.util.Date;
 public class UserResponse {
     private Integer id;
 
-    private String fullName;
+    private String fullname;
 
     private String phoneNumber;
 
@@ -22,7 +24,7 @@ public class UserResponse {
 
     private String address;
 
-    private Date dateOfBirth;
+    private LocalDate dateOfBirth;
 
     private Integer roleId;
 
@@ -32,9 +34,10 @@ public class UserResponse {
         UserResponse response = new UserResponse();
         BeanUtils.copyProperties(user, response);
         if (user.getRole() != null) {
-            response.setRoleId(user.getRole().getRoleId());
+            response.setRoleId(user.getRole().getId());
             response.setRoleName(user.getRole().getRoleName());
         }
+
         return response;
     }
 }

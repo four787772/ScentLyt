@@ -1,21 +1,26 @@
 package com.haui.ScentLyt.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "tokens")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Token {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "token_id", nullable = false)
     private Integer id;
 
@@ -30,11 +35,14 @@ public class Token {
     private String tokenType;
 
     @Column(name = "expiration_date")
-    private Instant expirationDate;
+    private LocalDateTime expirationDate;
 
     @NotNull
     @Column(name = "revoked", nullable = false)
     private Boolean revoked = false;
+
+    @Column(name = "is_mobile", columnDefinition = "TINYINT(1)")
+    private boolean isMobile;
 
     @NotNull
     @Column(name = "expired", nullable = false)
@@ -43,6 +51,7 @@ public class Token {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
     @Size(max = 255)
@@ -51,9 +60,5 @@ public class Token {
 
     @Column(name = "refresh_expiration_date")
     private LocalDateTime refreshExpirationDate;
-
-    @ColumnDefault("1")
-    @Column(name = "is_mobile")
-    private Integer isMobile;
 
 }

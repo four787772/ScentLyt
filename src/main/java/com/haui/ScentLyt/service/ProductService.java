@@ -1,6 +1,7 @@
 package com.haui.ScentLyt.service;
 
 import com.haui.ScentLyt.DTO.ProductDTO;
+import com.haui.ScentLyt.entity.Product;
 import com.haui.ScentLyt.exception.DataNotFoundException;
 import com.haui.ScentLyt.response.product.ProductResponse;
 import jakarta.transaction.Transactional;

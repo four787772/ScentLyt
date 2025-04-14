@@ -1,6 +1,7 @@
 package com.haui.ScentLyt.service;
 
 import com.haui.ScentLyt.DTO.CategoryDTO;
+import com.haui.ScentLyt.entity.Category;
 import com.haui.ScentLyt.response.category.CategoryResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;

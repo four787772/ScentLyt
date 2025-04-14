@@ -1,53 +1,55 @@
 package com.haui.ScentLyt.controller.admin;
 
+import com.haui.ScentLyt.DTO.UserDTO;
 import com.haui.ScentLyt.DTO.UserLoginDTO;
+import com.haui.ScentLyt.entity.Token;
 import com.haui.ScentLyt.entity.User;
+import com.haui.ScentLyt.exception.DataNotFoundException;
 import com.haui.ScentLyt.response.ResponseObject;
+import com.haui.ScentLyt.response.user.LoginResponse;
+import com.haui.ScentLyt.response.user.UserResponse;
+import com.haui.ScentLyt.service.TokenService;
 import com.haui.ScentLyt.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("${api.prefix}/users/admin")
+@RequestMapping("${api.prefix}/open-api/users/admin")
 @RequiredArgsConstructor
-public class UserController {
+public class AdminController {
 
     private final UserService userService;
+    private final TokenService tokenService;
 
 
-//
-//    @PostMapping("/register")
-//    public ResponseEntity<ResponseObject> register(@Valid @RequestBody UserDTO userDTO,
-//                                                   BindingResult result) throws DataNotFoundException {
-//
-//        List<String> errors = userService.validUser(result, userDTO);
-//        if (!errors.isEmpty()) {
-//            return ResponseEntity.badRequest().body(ResponseObject.builder()
-//                    .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_USER_FAILED))
-//                    .status(HttpStatus.BAD_REQUEST)
-//                    .data(errors)
-//                    .build());
-//        }
-//
-//        UserResponse userResponse = userService.save(userDTO);
-//        return ResponseEntity.ok().body(ResponseObject.builder()
-//                .message(localizationUtils.getLocalizedMessage(MessageKeys.REGISTER_USER_SUCCESSFULLY))
-//                .status(HttpStatus.OK)
-//                .data(userResponse)
-//                .build());
-//    }
+    @PostMapping("/register")
+    public ResponseEntity<ResponseObject> register(@Valid @RequestBody UserDTO userDTO,
+                                                   BindingResult result) throws DataNotFoundException {
+
+        List<String> errors = userService.validUser(result, userDTO);
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(ResponseObject.builder()
+                    .message("Đăng ký thất bại")
+                    .status(HttpStatus.BAD_REQUEST)
+                    .data(errors)
+                    .build());
+        }
+
+        UserResponse userResponse = userService.save(userDTO);
+        return ResponseEntity.ok().body(ResponseObject.builder()
+                .message("Đăng ký thành công")
+                .status(HttpStatus.OK)
+                .data(userResponse)
+                .build());
+    }
 
     @PostMapping("/login")
     public ResponseEntity<ResponseObject> login(@Valid @RequestBody UserLoginDTO userLoginDTO,
@@ -57,9 +59,9 @@ public class UserController {
         List<String> errors = userService.validLogin(result, userLoginDTO);
         if (!errors.isEmpty()) {
             return ResponseEntity.badRequest().body(ResponseObject.builder()
-                    .message("Login failed"))
+                    .message("Login failed")
                     .status(HttpStatus.BAD_REQUEST)
-                    .data(errors).build();
+                    .data(errors).build());
         }
 
         // Kiểm tra thông tin đăng nhập và sinh token
@@ -77,7 +79,7 @@ public class UserController {
                 .id(userDetail.getId())
                 .build();
         return ResponseEntity.ok().body(ResponseObject.builder()
-                .message(localizationUtils.getLocalizedMessage(MessageKeys.LOGIN_SUCCESSFULLY))
+                .message("Đăng nhập thành công")
                 .status(HttpStatus.OK)
                 .data(loginResponse).build());
     }
@@ -141,11 +143,11 @@ public class UserController {
 //                .build());
 //    }
 //
-//    private boolean isMobileDevice(String userAgent) {
-//        // Kiểm tra User-Agent header để xác định thiết bị di động
-//        // Ví dụ đơn giản:
-//        return userAgent.toLowerCase().contains("mobile");
-//    }
+    private boolean isMobileDevice(String userAgent) {
+        // Kiểm tra User-Agent header để xác định thiết bị di động
+        // Ví dụ đơn giản:
+        return userAgent.toLowerCase().contains("mobile");
+    }
 //
 //    @PutMapping("/{id}")
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_USER')")

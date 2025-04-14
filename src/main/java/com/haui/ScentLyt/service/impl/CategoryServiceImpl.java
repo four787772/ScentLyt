@@ -1,6 +1,8 @@
 package com.haui.ScentLyt.service.impl;
 
 import com.haui.ScentLyt.DTO.CategoryDTO;
+import com.haui.ScentLyt.entity.Category;
+import com.haui.ScentLyt.exception.DataNotFoundException;
 import com.haui.ScentLyt.repository.CategoryRepository;
 import com.haui.ScentLyt.response.category.CategoryResponse;
 import com.haui.ScentLyt.service.CategoryService;
@@ -92,7 +94,7 @@ public class CategoryServiceImpl implements CategoryService {
         for (Category category : categories) {
             CategoryResponse response = new CategoryResponse();
             BeanUtils.copyProperties(category, response);
-            response.setId(category.getCategoryId());
+            response.setId(category.getId());
             responses.add(response);
         }
         return responses;

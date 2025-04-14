@@ -1,6 +1,7 @@
 package com.haui.ScentLyt.service;
 
 import com.haui.ScentLyt.DTO.ChangePasswordDTO;
+import com.haui.ScentLyt.DTO.UpdateUserDTO;
 import com.haui.ScentLyt.DTO.UserDTO;
 import com.haui.ScentLyt.DTO.UserLoginDTO;
 import com.haui.ScentLyt.entity.User;
@@ -24,7 +25,7 @@ public interface UserService {
 
     User getUserDetailsFromToken(String token) throws Exception;
 
-    Page<UserResponse> getAllUsers(String name, String phoneNumber, String email, Boolean active, Pageable pageable);0
+    Page<UserResponse> getAllUsers(String name, String phoneNumber, String email, Boolean active, Pageable pageable);
 
     User updateUser(Integer userId, UpdateUserDTO updateUserDTO) throws DataNotFoundException;
 

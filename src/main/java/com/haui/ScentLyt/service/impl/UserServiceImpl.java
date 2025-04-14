@@ -1,11 +1,19 @@
 package com.haui.ScentLyt.service.impl;
 
+import com.haui.ScentLyt.DTO.ChangePasswordDTO;
+import com.haui.ScentLyt.DTO.UpdateUserDTO;
+import com.haui.ScentLyt.DTO.UserDTO;
 import com.haui.ScentLyt.DTO.UserLoginDTO;
+import com.haui.ScentLyt.entity.Role;
 import com.haui.ScentLyt.entity.User;
 import com.haui.ScentLyt.exception.DataNotFoundException;
+import com.haui.ScentLyt.exception.ExpiredTokenException;
 import com.haui.ScentLyt.exception.InvalidParamException;
+import com.haui.ScentLyt.repository.RoleRepository;
 import com.haui.ScentLyt.repository.UserRepository;
+import com.haui.ScentLyt.response.user.UserResponse;
 import com.haui.ScentLyt.service.UserService;
+import com.haui.ScentLyt.utils.DateUtils;
 import com.haui.ScentLyt.utils.JwtTokenUtils;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -24,12 +32,13 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
+import static com.haui.ScentLyt.utils.ValidationUtils.isValidEmail;
+
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
-
 
     private final PasswordEncoder passwordEncoder;
 
@@ -37,7 +46,53 @@ public class UserServiceImpl implements UserService {
 
     private final JwtTokenUtils jwtTokenUtils;
 
+    private final DateUtils dateUtils;
+    private final RoleRepository roleRepository;
 
+
+    @Override
+    public UserResponse save(UserDTO userDTO) throws DataNotFoundException {
+        User user = new User();
+        BeanUtils.copyProperties(userDTO, user);
+        user.setActive(true);
+
+        String password = userDTO.getPassword();
+        String encodedPassword = passwordEncoder.encode(password);
+
+        user.setPassword(encodedPassword);
+        user.setEmail(userDTO.getEmail());
+        user.setFullname(userDTO.getFullName());
+        user.setDateOfBirth(dateUtils.convertDateToLocalDate(userDTO.getDateOfBirth()));
+
+        Optional<Role> role = Optional.of(roleRepository.findById(userDTO.getRoleId()))
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy quyền"));
+
+        user.setRole(role.orElse(new Role()));
+
+        user = userRepository.save(user);
+
+        return UserResponse.fromUser(user);
+    }
+
+    @Override
+    public List<String> validUser(BindingResult result, UserDTO userDTO) {
+        List<String> errorMessages = new ArrayList<>();
+        if (result.hasErrors()) {
+            List<FieldError> fieldErrors = result.getFieldErrors();
+            for (FieldError error : fieldErrors) {
+                errorMessages.add(error.getDefaultMessage());
+            }
+        }
+
+        Optional<User> existingUser = userRepository.findByEmailOrPhoneNumber(userDTO.getEmail(), userDTO.getPhoneNumber());
+        if (existingUser.isPresent())
+            errorMessages.add("Số điện thoại hoặc email đã tồn tại");
+
+        if (!userDTO.getPassword().equals(userDTO.getRetypePassword()))
+            errorMessages.add("Mật khẩu không khớp");
+
+        return errorMessages;
+    }
 
     @Override
     public String login(UserLoginDTO userLoginDTO) throws InvalidParamException {
@@ -74,16 +129,14 @@ public class UserServiceImpl implements UserService {
             return errorMessages;
         }
 
-//        List<UserRole> userRoles = user.get().getUserRoles();
-//
-//        for (UserRole userRole : userRoles) {
-//            if (userRole.getRole().getActive() && userRole.getRole().getRoleName().equals("ROLE_GUEST"))
-//                errorMessages.add(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_NOT_ALLOWED_LOGIN));
-//            return errorMessages;
-//        }
+        Role role = user.get().getRole();
+
+
+        if (role.getActive() && role.getRoleName().equals("ROLE_GUEST"))
+            errorMessages.add("Bạn không có quyền login vào đây");
 
         if (!user.get().getActive()) {
-            errorMessages.add("User is not active!");
+            errorMessages.add("Tài khoản của bạn đã bị khoá");
         }
 
         return errorMessages;
@@ -114,7 +167,7 @@ public class UserServiceImpl implements UserService {
         User existingUser = userRepository.findById(userId)
                 .orElseThrow(() -> new DataNotFoundException("User not found"));
 
-        existingUser.setFullName(updateUserDTO.getFullName());
+        existingUser.setFullname(updateUserDTO.getFullName());
         existingUser.setAddress(updateUserDTO.getAddress());
         existingUser.setEmail(updateUserDTO.getEmail());
         if (updateUserDTO.getDateOfBirth() != null) {
@@ -137,11 +190,11 @@ public class UserServiceImpl implements UserService {
         }
 
         User existingUser = userRepository.findById(userId)
-                .orElseThrow(() -> new DataNotFoundException("User not found"));
+                .orElseThrow(() -> new DataNotFoundException("Không tìm thấy người dùng"));
 
         if(!updateUserDTO.getEmail().equals(existingUser.getEmail())){
             Optional<User> userByEmail = userRepository.findByEmailAndActive(updateUserDTO.getEmail(), true);
-            if(userByEmail.isPresent()) errorMessages.add(localizationUtils.getLocalizedMessage(MessageKeys.EMAIL_ALREADY_IS_USED));
+            if(userByEmail.isPresent()) errorMessages.add("Email đã được sử dụng");
         }
 
         return errorMessages;
@@ -178,11 +231,11 @@ public class UserServiceImpl implements UserService {
 
         boolean matches = passwordEncoder.matches(changePasswordDTO.getCurrentPassword(), user.getPassword());
         if(!matches){
-            errorMessages.add(localizationUtils.getLocalizedMessage(MessageKeys.CURRENT_PASSWORD_WRONG));
+            errorMessages.add("Mật khẩu không chính xác");
         }
 
         if(!Objects.equals(changePasswordDTO.getConfirmPassword(), changePasswordDTO.getNewPassword())){
-            errorMessages.add(localizationUtils.getLocalizedMessage(MessageKeys.PASSWORD_NOT_MATCH));
+            errorMessages.add("Mật khẩu mới không khớp");
         }
 
         return errorMessages;

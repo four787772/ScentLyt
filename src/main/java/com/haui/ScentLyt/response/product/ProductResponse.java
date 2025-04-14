@@ -1,5 +1,6 @@
 package com.haui.ScentLyt.response.product;
 
+import com.haui.ScentLyt.entity.Product;
 import lombok.*;
 import org.springframework.beans.BeanUtils;
 
@@ -26,7 +27,7 @@ public class ProductResponse {
     public static ProductResponse fromProduct(Product product) {
         ProductResponse response = new ProductResponse();
         BeanUtils.copyProperties(product, response);
-        response.setId(product.getProductId());
+        response.setId(product.getId());
         return response;
     }
 }

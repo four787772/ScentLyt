@@ -1,6 +1,7 @@
 package com.haui.ScentLyt.service.impl;
 
 import com.haui.ScentLyt.DTO.ProductDTO;
+import com.haui.ScentLyt.entity.Product;
 import com.haui.ScentLyt.exception.DataNotFoundException;
 import com.haui.ScentLyt.repository.ProductRepository;
 import com.haui.ScentLyt.response.product.ProductResponse;
@@ -31,7 +32,7 @@ public class ProductServiceImpl implements ProductService {
             BeanUtils.copyProperties(productDTO, product);
             Product savedProduct = productRepository.save(product);
             BeanUtils.copyProperties(savedProduct, response);
-            response.setId(savedProduct.getProductId());
+            response.setId(savedProduct.getId());
         } catch (Exception e) {
             throw new RuntimeException("Save product failed: " + e.getMessage());
         }
@@ -46,7 +47,7 @@ public class ProductServiceImpl implements ProductService {
             BeanUtils.copyProperties(productDTO, existingProduct);
             Product updatedProduct = productRepository.save(existingProduct);
             BeanUtils.copyProperties(updatedProduct, response);
-            response.setId(updatedProduct.getProductId());
+            response.setId(updatedProduct.getId());
         } catch (Exception e) {
             throw new RuntimeException("Update product failed: " + e.getMessage());
         }
@@ -127,7 +128,7 @@ public class ProductServiceImpl implements ProductService {
         for (Product product : products) {
             ProductResponse response = new ProductResponse();
             BeanUtils.copyProperties(product, response);
-            response.setId(product.getProductId());
+            response.setId(product.getId());
             responses.add(response);
         }
         return responses;
