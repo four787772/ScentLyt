@@ -40,7 +40,9 @@ public class WebSecurityConfig {
                     requests
                             .requestMatchers(
                                     //day la nhung api khong can phan quyen de co the su dung
-                                    String.format("%s/open-api/users/admin/**", apiPrefix))
+                                    String.format("%s/open-api/users/admin/**", apiPrefix),
+                                    String.format("%s/open-api/**", apiPrefix)
+                                    )
                             .permitAll()
                             .anyRequest().authenticated();
                 })
