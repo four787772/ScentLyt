@@ -3,6 +3,7 @@ package com.haui.ScentLyt.service.impl;
 import com.haui.ScentLyt.DTO.CategoryDTO;
 import com.haui.ScentLyt.entity.Category;
 import com.haui.ScentLyt.exception.DataNotFoundException;
+import com.haui.ScentLyt.entity.Category;
 import com.haui.ScentLyt.repository.CategoryRepository;
 import com.haui.ScentLyt.response.category.CategoryResponse;
 import com.haui.ScentLyt.service.CategoryService;
@@ -15,7 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,75 +29,58 @@ public class CategoryServiceImpl implements CategoryService {
     public Category save(CategoryDTO categoryDTO) {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
+        category.setActive(true); // Gán mặc định true khi tạo mới
         return categoryRepository.save(category);
     }
 
+
     @Override
     public Page<CategoryResponse> getAllCategories(String name, Boolean status, Pageable pageable) {
-        throw new UnsupportedOperationException("Chức năng phân trang chưa được hỗ trợ.");
+        return categoryRepository.findAllCategories(name, status, pageable)
+                .map(this::convertToResponse);
     }
 
     @Override
     public List<CategoryResponse> getAllCategories() {
-        List<Category> categories = categoryRepository.findAll();
-        return convertToResponseList(categories);
+        return categoryRepository.findAll()
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<CategoryResponse> getAllCategories(String name, Boolean status) {
-        List<Category> categories;
-
-        if (status != null) {
-            categories = categoryRepository.findByActive(status);
-        } else {
-            categories = categoryRepository.findAll();
-        }
-
-        if (name != null && !name.trim().isEmpty()) {
-            String keyword = name.trim().toLowerCase();
-            categories = categories.stream()
-                    .filter(c -> c.getCategoryName() != null && c.getCategoryName().toLowerCase().contains(keyword))
-                    .toList();
-        }
-
-        return convertToResponseList(categories);
+        return categoryRepository.findAllCategories(name, status)
+                .stream()
+                .map(this::convertToResponse)
+                .collect(Collectors.toList());
     }
 
     @Override
     public Category getCategory(Integer id) {
-        Optional<Category> optionalCategory = categoryRepository.findById(id);
-        if (optionalCategory.isPresent()) {
-            return optionalCategory.get();
-        }
-        try {
-            throw new DataNotFoundException("Category not found");
-        } catch (DataNotFoundException e) {
-            throw new RuntimeException(e);
-        }
+        return categoryRepository.findById(id).orElseThrow();
     }
 
     @Override
     @Transactional
     public Category update(Integer id, CategoryDTO categoryDTO) {
-        Category category = getCategory(id);
-        BeanUtils.copyProperties(categoryDTO, category);
-        return categoryRepository.save(category);
+        Category existing = categoryRepository.findById(id)
+                .orElseThrow();
+        BeanUtils.copyProperties(categoryDTO, existing);
+        return categoryRepository.save(existing);
     }
 
     @Override
     public void delete(Integer id) {
-        categoryRepository.deleteById(id);
+        Category category = categoryRepository.findById(id)
+                .orElseThrow();
+        categoryRepository.delete(category);
     }
 
-    // Helper để chuyển danh sách entity sang response
-    private List<CategoryResponse> convertToResponseList(List<Category> categories) {
-        List<CategoryResponse> responses = new ArrayList<>();
-        for (Category category : categories) {
-            CategoryResponse response = new CategoryResponse();
-            BeanUtils.copyProperties(category, response);
-            response.setId(category.getId());
-            responses.add(response);
-        }
-        return responses;
+    private CategoryResponse convertToResponse(Category category) {
+        CategoryResponse response = new CategoryResponse();
+        BeanUtils.copyProperties(category, response);
+        response.setId(category.getId()); // Gán id thủ công nếu cần
+        return response;
     }
 }

@@ -24,15 +24,15 @@ public class MessageKeys {
 
     public static final String WRONG_PHONE_PASSWORD = "user.login.wrong_phone_password";
 
-    public static final String INSERT_COMMODITY_SUCCESSFULLY = "commodity.create_commodity_successfully";
-    public static final String INSERT_COMMODITY_FAILED = "commodity.create_commodity_failed";
-    public static final String UPDATE_COMMODITY_FAILED = "commodity.update_commodity_failed";
-    public static final String UPDATE_COMMODITY_SUCCESSFULLY = "commodity.update_commodity_successfully";
-    public static final String DELETE_COMMODITY_SUCCESSFULLY = "commodity.delete_commodity_successfully";
-    public static final String GET_COMMODITY_SUCCESSFULLY = "commodity.get_commodity_successfully";
-    public static final String GET_COMMODITY_FAILED = "commodity.get_commodity_failed";
-    public static final String COMMODITY_IS_EXISTS = "commodity.commodity_is_exists";
-    public static final String COMMODITY_IS_NOT_FOUND = "commodity.commodity_is_not_found";
+    public static final String INSERT_CATEGORY_SUCCESSFULLY = "commodity.create_commodity_successfully";
+    public static final String INSERT_CATEGORY_FAILED = "commodity.create_commodity_failed";
+    public static final String UPDATE_CATEGORY_FAILED = "commodity.update_commodity_failed";
+    public static final String UPDATE_CATEGORY_SUCCESSFULLY = "commodity.update_commodity_successfully";
+    public static final String DELETE_CATEGORY_SUCCESSFULLY = "commodity.delete_commodity_successfully";
+    public static final String GET_CATEGORY_SUCCESSFULLY = "commodity.get_commodity_successfully";
+    public static final String GET_CATEGORY_FAILED = "commodity.get_commodity_failed";
+    public static final String CATEGORY_IS_EXISTS = "commodity.commodity_is_exists";
+    public static final String CATEGORY_IS_NOT_FOUND = "commodity.commodity_is_not_found";
 
     public static final String SUPPLIER_IS_NOT_EXISTS = "supplier.supplier_is_not_exists";
     public static final String INSERT_SUPPLIER_SUCCESSFULLY = "supplier.insert_supplier_successfully";
@@ -174,4 +174,7 @@ public class MessageKeys {
 
 
     public static final String ACCESS_DENIED = "access denied";
+
+    public static final String PRODUCT_IS_NOT_FOUND = "PRODUCT_IS_NOT_FOUND";
+    public static final String PROMOTION_PRODUCT_IS_NOT_FOUND = "PROMOTION_PRODUCT_IS_NOT_FOUND";
 }
