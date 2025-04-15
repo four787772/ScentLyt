@@ -27,15 +27,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public ProductResponse save(ProductDTO productDTO) {
         ProductResponse response = new ProductResponse();
-        try {
-            Product product = new Product();
-            BeanUtils.copyProperties(productDTO, product);
-            Product savedProduct = productRepository.save(product);
-            BeanUtils.copyProperties(savedProduct, response);
-            response.setId(savedProduct.getId());
-        } catch (Exception e) {
-            throw new RuntimeException("Save product failed: " + e.getMessage());
-        }
+
+        Product product = new Product();
+        BeanUtils.copyProperties(productDTO, product);
+        Product savedProduct = productRepository.save(product);
+
+
+        BeanUtils.copyProperties(savedProduct, response);
+        response.setId(savedProduct.getId());
         return response;
     }
 
@@ -89,8 +88,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Page<ProductResponse> getProducts(String name, Integer unused, Boolean alsoUnused, Pageable pageable) {
-        throw new UnsupportedOperationException("Pagination with filters is not yet implemented.");
+    public Page<ProductResponse> getProducts(String name, String fragrance, String color, Pageable pageable) {
+        Page<Product> variants = productRepository.findAllProducts(name, fragrance, color, pageable);
+        return variants.map(ProductResponse::fromProduct);
     }
 
     @Override

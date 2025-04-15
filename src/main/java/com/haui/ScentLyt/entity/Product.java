@@ -1,5 +1,6 @@
 package com.haui.ScentLyt.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -9,14 +10,17 @@ import org.hibernate.annotations.ColumnDefault;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "products")
-public class Product {
+public class Product extends BaseEntity {
     @Id
     @Column(name = "product_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Size(max = 100)
@@ -46,12 +50,8 @@ public class Product {
     @Column(name = "color", nullable = false, length = 100)
     private String color;
 
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "created_at")
-    private Instant createdAt;
-
-    @ColumnDefault("CURRENT_TIMESTAMP")
-    @Column(name = "updated_at")
-    private Instant updatedAt;
+    @OneToMany(mappedBy = "product")
+    @JsonManagedReference
+    private List<ProductImage> images;
 
 }

@@ -28,7 +28,6 @@ import java.util.List;
 public class CategoryController {
 
     private final CategoryService categoryService;
-    private final LocalizationUtils localizationUtils;
 
     @PostMapping
 //    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_CREATE')")
@@ -43,7 +42,7 @@ public class CategoryController {
 
             return ResponseEntity.badRequest().body(
                     ResponseObject.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.INSERT_CATEGORY_FAILED))
+                            .message(MessageKeys.INSERT_CATEGORY_FAILED)
                             .status(HttpStatus.BAD_REQUEST)
                             .data(errors)
                             .build());
@@ -52,7 +51,7 @@ public class CategoryController {
         Category category = categoryService.save(categoryDTO);
         return ResponseEntity.ok().body(
                 ResponseObject.builder()
-                        .message(localizationUtils.getLocalizedMessage(MessageKeys.INSERT_CATEGORY_SUCCESSFULLY))
+                        .message(MessageKeys.INSERT_CATEGORY_SUCCESSFULLY)
                         .status(HttpStatus.OK)
                         .data(category)
                         .build());
@@ -64,14 +63,14 @@ public class CategoryController {
             List<CategoryResponse> categoryResponses = categoryService.getAllCategories(name, true);
             return ResponseEntity.ok().body(
                     ResponseObject.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.GET_CATEGORY_SUCCESSFULLY))
+                            .message(MessageKeys.GET_CATEGORY_SUCCESSFULLY)
                             .status(HttpStatus.OK)
                             .data(categoryResponses)
                             .build());
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(
                     ResponseObject.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.GET_CATEGORY_FAILED))
+                            .message(MessageKeys.GET_CATEGORY_FAILED)
                             .status(HttpStatus.BAD_REQUEST)
                             .build());
         }
@@ -92,36 +91,14 @@ public class CategoryController {
 
         return ResponseEntity.ok().body(
                 ResponseObject.builder()
-                        .message(localizationUtils.getLocalizedMessage(MessageKeys.GET_CATEGORY_SUCCESSFULLY))
+                        .message(MessageKeys.GET_CATEGORY_SUCCESSFULLY)
                         .status(HttpStatus.OK)
                         .data(listCategoryResponse)
                         .build());
     }
 
-    @GetMapping("/details/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_READ')")
-    public ResponseEntity<ResponseObject> getCategoryDetail(@PathVariable Integer id) {
-        Category category = categoryService.getCategory(id);
-
-        if (category == null) {
-            return ResponseEntity.ok().body(
-                    ResponseObject.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.CATEGORY_IS_NOT_FOUND))
-                            .status(HttpStatus.NOT_FOUND)
-                            .data("")
-                            .build());
-        }
-
-        return ResponseEntity.ok().body(
-                ResponseObject.builder()
-                        .message(localizationUtils.getLocalizedMessage(MessageKeys.GET_CATEGORY_SUCCESSFULLY))
-                        .status(HttpStatus.OK)
-                        .data(category)
-                        .build());
-    }
-
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_UPDATE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_UPDATE')")
     public ResponseEntity<ResponseObject> updateCategory(@PathVariable Integer id,
                                                          @Valid @RequestBody CategoryDTO categoryDTO,
                                                          BindingResult result) {
@@ -130,7 +107,7 @@ public class CategoryController {
         if (category == null) {
             return ResponseEntity.badRequest().body(
                     ResponseObject.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.CATEGORY_IS_NOT_FOUND))
+                            .message(MessageKeys.CATEGORY_IS_NOT_FOUND)
                             .status(HttpStatus.BAD_REQUEST)
                             .build());
         }
@@ -143,7 +120,7 @@ public class CategoryController {
 
             return ResponseEntity.badRequest().body(
                     ResponseObject.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_CATEGORY_FAILED))
+                            .message(MessageKeys.UPDATE_CATEGORY_FAILED)
                             .status(HttpStatus.BAD_REQUEST)
                             .data(errors)
                             .build());
@@ -152,21 +129,43 @@ public class CategoryController {
         category = categoryService.update(id, categoryDTO);
         return ResponseEntity.ok().body(
                 ResponseObject.builder()
-                        .message(localizationUtils.getLocalizedMessage(MessageKeys.UPDATE_CATEGORY_SUCCESSFULLY))
+                        .message(MessageKeys.UPDATE_CATEGORY_SUCCESSFULLY)
+                        .status(HttpStatus.OK)
+                        .data(category)
+                        .build());
+    }
+
+    @GetMapping("/details/{id}")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_READ')")
+    public ResponseEntity<ResponseObject> getCategoryDetail(@PathVariable Integer id) {
+        Category category = categoryService.getCategory(id);
+
+        if (category == null) {
+            return ResponseEntity.ok().body(
+                    ResponseObject.builder()
+                            .message(MessageKeys.CATEGORY_IS_NOT_FOUND)
+                            .status(HttpStatus.NOT_FOUND)
+                            .data("")
+                            .build());
+        }
+
+        return ResponseEntity.ok().body(
+                ResponseObject.builder()
+                        .message(MessageKeys.GET_CATEGORY_SUCCESSFULLY)
                         .status(HttpStatus.OK)
                         .data(category)
                         .build());
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELETE')")
+//    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DELETE')")
     public ResponseEntity<ResponseObject> deleteCategory(@PathVariable Integer id) {
         Category category = categoryService.getCategory(id);
 
         if (category == null) {
             return ResponseEntity.ok().body(
                     ResponseObject.builder()
-                            .message(localizationUtils.getLocalizedMessage(MessageKeys.CATEGORY_IS_NOT_FOUND))
+                            .message(MessageKeys.CATEGORY_IS_NOT_FOUND)
                             .status(HttpStatus.NOT_FOUND)
                             .build());
         }
@@ -174,7 +173,7 @@ public class CategoryController {
         categoryService.delete(id);
         return ResponseEntity.ok().body(
                 ResponseObject.builder()
-                        .message(localizationUtils.getLocalizedMessage(MessageKeys.DELETE_CATEGORY_SUCCESSFULLY))
+                        .message(MessageKeys.DELETE_CATEGORY_SUCCESSFULLY)
                         .status(HttpStatus.OK)
                         .build());
     }

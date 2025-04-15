@@ -86,7 +86,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
                 // Healthcheck request, no JWT token required
 
                 Pair.of(String.format("%s/open-api/**", apiPrefix), "POST"),
-                Pair.of(String.format("%s/open-api/**", apiPrefix), "GET")
+                Pair.of(String.format("%s/open-api/**", apiPrefix), "GET"),
+                Pair.of(String.format("%s/open-api/**", apiPrefix), "DELETE"),
+                Pair.of(String.format("%s/open-api/**", apiPrefix), "PUT")
         );
 
         String requestPath = request.getServletPath();

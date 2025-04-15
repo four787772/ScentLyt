@@ -26,6 +26,7 @@ public class GlobalExceptionHandler {
            ResponseObject.builder()
                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
                    .message("Hiện tại đang có lỗi!!!")
+                   .data(exception.getMessage())
                    .build()
         );
     }

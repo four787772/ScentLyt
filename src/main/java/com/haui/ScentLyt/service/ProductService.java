@@ -22,7 +22,7 @@ public interface ProductService {
 
     Product getProductById(Integer productId) throws DataNotFoundException, DataNotFoundException;
 
-    Page<ProductResponse> getProducts(String name, Integer categoryId, Boolean status, Pageable pageable);
+    Page<ProductResponse> getProducts(String name, String fragrance, String color, Pageable pageable);
 
     List<ProductResponse> getProducts();
 

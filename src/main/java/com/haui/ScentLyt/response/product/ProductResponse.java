@@ -5,6 +5,7 @@ import lombok.*;
 import org.springframework.beans.BeanUtils;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Data
@@ -21,8 +22,8 @@ public class ProductResponse {
     private Integer stockQuantity;
     private String fragrance;
     private String color;
-    private Date createdAt;
-    private Date updatedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
     public static ProductResponse fromProduct(Product product) {
         ProductResponse response = new ProductResponse();
